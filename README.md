@@ -10,4 +10,4 @@ The script copies data from the url, holds it against a local copy of the locati
 - /js/: compiled javascript from the typescript source file(s).
 
 ## How to use
-Use server.ts, alternatively you could move ams_empty to the /js/ folder and run `node server.js` to run the compiled javascript directly
+Use server.ts in your environment of choice, alternatively you could move ams_empty to the /js/ folder and run `node server.js` to run the compiled javascript directly
