@@ -86,23 +86,17 @@ var fetchData = (function () {
                 // create a FeatureCollection to store our result
                 var result = new FeatureCollection();
                 result = JSON.parse(body);
-                if (geoJSON.timestamps) {
-                    geoJSON.timestamps.push(Date.now());
-                }
-                else {
-                    geoJSON.timestamps = [Date.now()];
-                }
                 geoJSON.url = this.url;
                 geoJSON.features.forEach(function (feature) {
                     // this code will be a bottleneck with large files. If we can expect the GeoJSON to always 
                     // be the same ordered list, this code can be made a lot faster
                     result.features.forEach(function (f) {
                         if (f.Id === feature.Id) {
-                            if (feature.sensors && feature.sensors.FreeSpaceLong) {
+                            feature.properties = f.properties;
+                            if (geoJSON.hasOwnProperty('timestamps')) {
                                 feature.sensors.FreeSpaceLong.push(Number(f.properties.FreeSpaceLong));
                                 feature.sensors.FreeSpaceShort.push(Number(f.properties.FreeSpaceShort));
                                 feature.sensors.percAvailable.push(Number(f.properties.FreeSpaceShort) / Number(f.properties.ShortCapacity));
-                                feature.properties = f.properties;
                                 feature.properties.percAvailable = Number(f.properties.FreeSpaceShort) / Number(f.properties.ShortCapacity);
                                 feature.properties.FreeSpaceLong = Number(feature.properties.FreeSpaceLong);
                                 feature.properties.FreeSpaceShort = Number(feature.properties.FreeSpaceShort);
@@ -119,6 +113,12 @@ var fetchData = (function () {
                         }
                     });
                 });
+                if (geoJSON.hasOwnProperty('timestamps')) {
+                    geoJSON.timestamps.push(Date.now());
+                }
+                else {
+                    geoJSON.timestamps = [Date.now()];
+                }
                 fs.writeFile('Ams.json', JSON.stringify(geoJSON), function (err) {
                     if (err)
                         throw err;
